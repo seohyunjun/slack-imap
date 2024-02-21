@@ -15,11 +15,11 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - uses: actions/checkout@v3
       - name: Checkout & Set Environment Variables
-      
-      - uses: actions/setup-python@v5
+        uses: actions/checkout@v3
+
       - name: Install dependencies
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip' 
