@@ -1,5 +1,4 @@
 name: Slack IMAPLIB
-
 on:
   push:
     branches:
@@ -18,24 +17,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Checkout & Set Environment Variables
-        
-      - name: Set Environment Variables
-        run: |
-          echo "IMAP_HOST=${{ secrets.IMAP4_SSL }}" >> $GITHUB_WORKSPACE/.env
-          echo "IMAP_USER=${{ secrets.EMAIL }}" >> $GITHUB_WORKSPACE/.env
-          echo "IMAP_PASS=${{ secrets.PASSWORD }}" >> $GITHUB_WORKSPACE/.env
-          echo "IMAP_PASS=${{ secrets.PORT }}" >> $GITHUB_WORKSPACE/.env
-          echo "IMAP_PASS=${{ secrets.LABEL }}" >> $GITHUB_WORKSPACE/.env
-      
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-          cache: 'pip' 
-        run: |
-          pip install -r requirements.txt 
-          python3 main.py >> email.txt
-          ## set variable email to the email.txt file
-          email=$(cat email.txt) >> $GITHUB_ENV
       
       - name: Send custom JSON data to Slack workflow
         id: slack
