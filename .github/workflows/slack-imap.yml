@@ -23,6 +23,8 @@ jobs:
         with:
           python-version: '3.11'
           cache: 'pip' 
+
+      - name: Set up environment variables
         run: |
           echo "IMAP_HOST=${{ secrets.IMAP4_SSL }}" >> $GITHUB_WORKSPACE/.env
           echo "IMAP_USER=${{ secrets.EMAIL }}" >> $GITHUB_WORKSPACE/.env
