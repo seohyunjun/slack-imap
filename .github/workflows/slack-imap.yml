@@ -1,0 +1,65 @@
+name: Slack IMAPLIB
+
+on:
+  push:
+    branches:
+      - main
+
+  schedule:
+    # https://crontab.guru/
+    # Past 1 hour day-of-week (Monday through Friday)
+    - cron: '0 */3 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  cron:
+    runs-on: ubuntu-latest
+    
+    steps:
+
+      - uses: actions/checkout@v2
+      - name: Set Environment Variables
+        run: |
+          echo "IMAP_HOST=${{ secrets.IMAP4_SSL }}" >> $GITHUB_WORKSPACE/.env
+          echo "IMAP_USER=${{ secrets.EMAIL }}" >> $GITHUB_WORKSPACE/.env
+          echo "IMAP_PASS=${{ secrets.PASSWORD }}" >> $GITHUB_WORKSPACE/.env
+          echo "IMAP_PASS=${{ secrets.PORT }}" >> $GITHUB_WORKSPACE/.env
+          echo "IMAP_PASS=${{ secrets.LABEL }}" >> $GITHUB_WORKSPACE/.env
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip' 
+        run: |
+          pip install -r requirements.txt 
+          python3 main.py >> email.txt
+          ## set variable email to the email.txt file
+          email=$(cat email.txt) >> $GITHUB_ENV
+      
+      - name: Send custom JSON data to Slack workflow
+        id: slack
+        uses: slackapi/slack-github-action@v1.25.0
+        with:
+        # For posting a rich message using Block Kit
+          payload: |
+            {
+              "text": "Unread Email",
+              "blocks": [
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*user name*\n Deploy to ${{ inputs.deploy_target }} by @${{ github.actor }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*email*\n$email" 
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
