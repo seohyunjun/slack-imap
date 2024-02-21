@@ -33,8 +33,11 @@ jobs:
           echo "PORT=${{ secrets.PORT }}" >> .env
           echo "LABEL=${{ secrets.LABEL }}" >> .env
           pip install -r requirements.txt 
-          python3 main.py >> email.txt
-          echo "email="$(cat email.txt)"" >> $GITHUB_ENV
+
+        - name: Run Python script
+          run: |
+           python3 main.py >> email.txt
+           echo "email="$(cat email.txt)"" >> $GITHUB_ENV
       
       - name: Send custom JSON data to Slack workflow
         id: slack
