@@ -26,6 +26,7 @@ jobs:
 
       - name: Set up environment variables
         run: |
+          cd $GITHUB_WORKSPACE
           echo "IMAP_HOST=${{ secrets.IMAP4_SSL }}" >> $GITHUB_WORKSPACE/.env
           echo "IMAP_USER=${{ secrets.EMAIL }}" >> $GITHUB_WORKSPACE/.env
           echo "IMAP_PASS=${{ secrets.PASSWORD }}" >> $GITHUB_WORKSPACE/.env
