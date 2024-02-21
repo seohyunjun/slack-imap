@@ -27,11 +27,11 @@ jobs:
       - name: Set up environment variables
         run: |
           cd $GITHUB_WORKSPACE
-          echo "IMAP_HOST=${{ secrets.IMAP4_SSL }}" >> $GITHUB_WORKSPACE/.env
-          echo "IMAP_USER=${{ secrets.EMAIL }}" >> $GITHUB_WORKSPACE/.env
-          echo "IMAP_PASS=${{ secrets.PASSWORD }}" >> $GITHUB_WORKSPACE/.env
-          echo "IMAP_PASS=${{ secrets.PORT }}" >> $GITHUB_WORKSPACE/.env
-          echo "IMAP_PASS=${{ secrets.LABEL }}" >> $GITHUB_WORKSPACE/.env
+          echo "IMAP_HOST=${{ secrets.IMAP4_SSL }}" >> .env
+          echo "IMAP_USER=${{ secrets.EMAIL }}" >> .env
+          echo "IMAP_PASS=${{ secrets.PASSWORD }}" >> .env
+          echo "IMAP_PASS=${{ secrets.PORT }}" >> .env
+          echo "IMAP_PASS=${{ secrets.LABEL }}" >> .env
           pip install -r requirements.txt 
           python3 main.py >> email.txt
           ## set variable email to the email.txt file
