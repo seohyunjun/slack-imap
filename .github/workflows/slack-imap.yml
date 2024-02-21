@@ -16,8 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout & Set Environment Variables
       - uses: actions/checkout@v2
+      - name: Checkout & Set Environment Variables
         run: |
           echo "IMAP_HOST=${{ secrets.IMAP4_SSL }}" >> $GITHUB_WORKSPACE/.env
           echo "IMAP_USER=${{ secrets.EMAIL }}" >> $GITHUB_WORKSPACE/.env
