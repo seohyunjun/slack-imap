@@ -27,6 +27,11 @@ jobs:
       - name: Set up environment variables
         run: |
           cd $GITHUB_WORKSPACE
+          echo "IMAP4_SSL=${{ secrets.IMAP4_SSL }}" >> .env
+          echo "EMAIL=${{ secrets.EMAIL }}" >> .env
+          echo "PASSWORD=${{ secrets.PASSWORD }}" >> .env
+          echo "PORT=${{ secrets.PORT }}" >> .env
+          echo "LABEL=${{ secrets.LABEL }}" >> .env
           pip install -r requirements.txt 
           python3 main.py >> email.txt
 
