@@ -56,7 +56,7 @@ def get_mail(no):
     print(f"Send: {fr}")
     print(f"Title: {subject}")
     
-    return f"({date.__str__()}) {fr} {subject}"
+    return f"{date.__str__()} {fr} {subject}"
 if __name__=='__main__':
     
     
@@ -79,5 +79,5 @@ if __name__=='__main__':
         for num in data[0].split():
             
             message+=get_mail(num)+'\t'
-            
-    print(message.replace('\n','\t'))
+            print(message.replace('\n','\t'))
+            break
