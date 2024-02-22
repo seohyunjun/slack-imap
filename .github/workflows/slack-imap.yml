@@ -58,7 +58,7 @@ jobs:
                     },
                     {
                       "type": "mrkdwn",
-                      "text": ${{ env.email }}
+                      "text": "${{ env.email }}"
                     }
                   ]
                 }
