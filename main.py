@@ -78,6 +78,6 @@ if __name__=='__main__':
         message = ""
         for num in data[0].split():
             
-            message+=get_mail(num)+'\n'
+            message+=get_mail(num)+'\t'
             
-    print(message)
+    print(message.replace('\n','\t'))
