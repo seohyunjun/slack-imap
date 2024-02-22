@@ -34,6 +34,10 @@ jobs:
           echo "LABEL=${{ secrets.LABEL }}" >> .env
           pip install -r requirements.txt 
           python3 main.py >> email.txt
+
+      - name: Input email to environment
+        id: input-email 
+        run: |
           echo "email="$(cat email.txt) | cat | head -n 2 | cut -c 1-300 | tr '\n' ' '| tr -d '\n'"" >> $GITHUB_ENV
       
       - name: Send custom JSON data to Slack workflow
@@ -58,7 +62,7 @@ jobs:
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "${{ env.email }}"
+                      "text": "${{ steps.set-email.outputs.email }}"
                     }
                   ]
                 }
