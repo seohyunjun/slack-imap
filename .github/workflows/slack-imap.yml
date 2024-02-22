@@ -7,7 +7,7 @@ on:
   schedule:
     # https://crontab.guru/
     # Past 1 hour day-of-week (Monday through Friday)
-    - cron: '0 */3 * * 1-5'
+    - cron: '0 */1 * * 1-5'
   workflow_dispatch:
 
 jobs:
@@ -54,7 +54,11 @@ jobs:
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "*email*\n ${{ env.email }}" 
+                      "text": "*email*" 
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": ${{ toJSON(github.event.head_commit.message) }}
                     }
                   ]
                 }
