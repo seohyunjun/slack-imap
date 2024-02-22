@@ -37,8 +37,8 @@ def get_mail(no):
     message = email.message_from_bytes(fetched[0][1])
 
     date = make_header(decode_header(message.get('Date')))
-    fr = make_header(decode_header(message.get('From')))
-    subject = make_header(decode_header(message.get('Subject')))
+    fr = make_header(decode_header(message.get('From'))).replace('\n',' ')
+    subject = make_header(decode_header(message.get('Subject'))).replace('\n',' ')
 
     if message.is_multipart():
         for part in message.walk():
