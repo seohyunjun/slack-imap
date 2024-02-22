@@ -34,7 +34,7 @@ jobs:
           echo "LABEL=${{ secrets.LABEL }}" >> .env
           pip install -r requirements.txt 
           python3 main.py >> email.txt
-          echo "email="$(cat email.txt)"" > $GITHUB_ENV
+          echo "email="$(cat test.txt) | cat | head -n 2 | cut -c 1-500 | tr '\n' '\n'"" > $GITHUB_ENV
           echo $email
 
       - name: Send custom JSON data to Slack workflow
