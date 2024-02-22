@@ -51,11 +51,7 @@ def get_mail(no):
         pass
         #body = message.get_payload(decode=True)
         
-    #body = body.decode('utf-8')
-    print(f"{date.__str__()}")
-    print(f"Send: {fr}")
-    print(f"Title: {subject}")
-    
+    #body = body.decode('utf-8')    
     return f"{date.__str__()} {fr} {subject}"
 if __name__=='__main__':
     
