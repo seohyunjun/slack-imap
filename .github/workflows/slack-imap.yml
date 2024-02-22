@@ -62,7 +62,7 @@ jobs:
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "${{ steps.set-email.outputs.email }}"
+                      "text": "${{ env.email }}"
                     }
                   ]
                 }
