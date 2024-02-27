@@ -34,12 +34,12 @@ jobs:
           echo "LABEL=${{ secrets.LABEL }}" >> .env
           pip install -r requirements.txt 
           python3 main.py
-          echo "email="$(cat send_email.json)"" >> $GITHUB_ENV
 
       - name: Input email to environment
         id: input-email 
         run: |
-          echo "email="$(cat email.txt)"" >> $GITHUB_ENV
+          echo "email="$(cat send_email.json)"" >> $GITHUB_ENV
+      
       - name: Send custom JSON data to Slack workflow
         id: slack
         uses: slackapi/slack-github-action@v1.24.0
