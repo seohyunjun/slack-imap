@@ -3,6 +3,8 @@ from pytz import timezone
 import imaplib
 import os
 
+import json
+        
 from dateutil.parser import parse
 import datetime
 
@@ -69,11 +71,27 @@ if __name__=='__main__':
         # return Fail slack message
         pass
     
+    fields = [
+                {
+                    "type": "mrkdwn",
+                    "text": "*email*" 
+                }
+            ]
     if result=="OK":
         
         message = ""
         for num in data[0].split():
+            fields.append({"type": "mrkdwn","text": f"{get_mail(num)}"})
             
-            message+=get_mail(num)+'\t'
-            print(message.replace('\n','\t'))
-            break
+        temp = {
+              "text": "Unread Email",
+              "blocks": [
+                {
+                  "type": "section",
+                  "fields": fields
+                }
+              ]
+            }
+        with open('send_email.json', 'w') as outfile:
+            json.dump(temp, outfile, indent=4)
+        

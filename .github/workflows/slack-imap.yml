@@ -33,7 +33,8 @@ jobs:
           echo "PORT=${{ secrets.PORT }}" >> .env
           echo "LABEL=${{ secrets.LABEL }}" >> .env
           pip install -r requirements.txt 
-          python3 main.py >> email.txt
+          python3 main.py
+          echo "email="$(cat send_email.json)"" >> $GITHUB_ENV
 
       - name: Input email to environment
         id: input-email 
@@ -45,28 +46,7 @@ jobs:
         with:
         # For posting a rich message using Block Kit
           payload: |
-            {
-              "text": "Unread Email",
-              "blocks": [
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "*user name*\n Deploy to ${{ inputs.deploy_target }} by @${{ github.actor }}"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*email*" 
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "${{ env.email }}"
-                    }
-                  ]
-                }
-              ]
-            }
+            ${{ env.email }}
 
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

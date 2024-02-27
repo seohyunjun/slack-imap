@@ -1,6 +1,10 @@
 # slack-imap
 #### This script sends unread emails to slack in real time.
 ---
+#### (24.2.27) v0.0.1 add workflow 
+- gemini summarize
+- summarize email
+
 #### (24.2.21) v0.0.1 add workflow 
 - cron job
 - sending email with attachment 
@@ -14,6 +18,7 @@ EMAIL="...@gmail.com"
 PASSWORD="..."
 PORT=993
 LABEL="..."
+GOOGLE_API_KEY="..."
 ```
 
 #### cron job
