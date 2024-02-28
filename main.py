@@ -34,7 +34,7 @@ def genai_transform(text):
         # slack block message max length is 255.
         return text[:210]
     except:
-        return text
+        return text[:210]
 
 # INBOX 메일함 선택
 def check_mailbox(server, mailbox):
