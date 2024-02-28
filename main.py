@@ -28,10 +28,11 @@ genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
 def genai_transform(text):
     try:
         model = genai.GenerativeModel('gemini-pro')
-        prompt = "Summarize the following text: " + text
+        prompt = "Summarize 20 words the following text: " + text
         response = model.generate_content(prompt)
         text = response.text
-        return text
+        # slack block message max length is 255.
+        return text[:210]
     except:
         return text
 
@@ -76,9 +77,9 @@ def get_mail(no):
         fr = fr.__str__() 
     message = genai_transform(f"{subject.__str__()} {body}")
     return  f"{date.__str__()} {fr} {message}"
-    
+
+
 if __name__=='__main__':
-    
     
     server = imaplib.IMAP4_SSL(IMAP4_SSL, port=PORT)
     server.login(EMAIL, PASSWORD)
@@ -118,4 +119,5 @@ if __name__=='__main__':
             }
         with open('send_email.json', 'w') as outfile:
             json.dump(temp, outfile, indent=4)
-        
+    
+    
