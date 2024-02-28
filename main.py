@@ -23,15 +23,16 @@ PORT = os.getenv('PORT')
 LABEL = os.getenv('LABEL')
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 
-genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
 
 def genai_transform(text):
+    
     try:
         model = genai.GenerativeModel('gemini-pro')
         prompt = "Summarize 20 words the following text: " + text
         response = model.generate_content(prompt)
         text = response.text
         # slack block message max length is 255.
+        print(text)
         return text[:210]
     except:
         return text[:210]
@@ -80,6 +81,7 @@ def get_mail(no):
 
 
 if __name__=='__main__':
+    genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
     
     server = imaplib.IMAP4_SSL(IMAP4_SSL, port=PORT)
     server.login(EMAIL, PASSWORD)
@@ -105,7 +107,6 @@ if __name__=='__main__':
         message = ""
         for num in data[0].split():
             mail_text = get_mail(num)
-            print(mail_text)
             fields.append({"type": "mrkdwn","text": f"{mail_text}"})
             fields.append({"type": "divider"})
         temp = {
