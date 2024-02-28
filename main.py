@@ -62,9 +62,9 @@ def get_mail(no):
         for part in message.walk():
             ctype = part.get_content_type()
             cdispo = str(part.get('Content-Disposition'))
-            # if ctype == 'text/plain' and 'attachment' not in cdispo:
-            #     body = part.get_payload(decode=True)
-            #     break
+            if ctype == 'text/plain' and 'attachment' not in cdispo:
+                body = part.get_payload(decode=True)
+                break
     else:
         body = message.get_payload(decode=True)
         
@@ -108,7 +108,6 @@ if __name__=='__main__':
         for num in data[0].split():
             mail_text = get_mail(num)
             fields.append({"type": "mrkdwn","text": f"{mail_text}"})
-            fields.append({"type": "divider"})
         temp = {
               "text": "Unread Email",
               "blocks": [
