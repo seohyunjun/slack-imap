@@ -24,7 +24,7 @@ LABEL = os.getenv('LABEL')
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 
 
-def genai_transform(text):
+def genai_transform(text, genai):
     model = genai.GenerativeModel('gemini-pro')
     prompt = "Summarize 20 words the following text: " + text
     response = model.generate_content(prompt)
@@ -46,7 +46,7 @@ def check_mailbox(server, mailbox):
     else:
         return "Can't connect to the mailbox"
 
-def get_mail(no):
+def get_mail(no, genai):
     rv, fetched = server.fetch(no, '(RFC822)')
     message = email.message_from_bytes(fetched[0][1])
 
@@ -74,7 +74,7 @@ def get_mail(no):
         fr = fr.__str__() 
         
     print(body)
-    message = genai_transform(f"{subject.__str__()} {body}")
+    message = genai_transform(f"""{subject.__str__()} {body}""", genai)
     return  f"{date.__str__()} {fr} {message}"
 
 
@@ -104,7 +104,7 @@ if __name__=='__main__':
         
         message = ""
         for num in data[0].split():
-            mail_text = get_mail(num)
+            mail_text = get_mail(num, genai)
             fields.append({"type": "mrkdwn","text": f"{mail_text}"})
         temp = {
               "text": "Unread Email",
