@@ -25,17 +25,13 @@ GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 
 
 def genai_transform(text):
-    
-    try:
-        model = genai.GenerativeModel('gemini-pro')
-        prompt = "Summarize 20 words the following text: " + text
-        response = model.generate_content(prompt)
-        text = response.text
-        # slack block message max length is 255.
-        print(text)
-        return text[:210]
-    except:
-        return text[:210]
+    model = genai.GenerativeModel('gemini-pro')
+    prompt = "Summarize 20 words the following text: " + text
+    response = model.generate_content(prompt)
+    text = response.text
+    # slack block message max length is 255.
+    print(text)
+    return text[:210]
 
 # INBOX 메일함 선택
 def check_mailbox(server, mailbox):
@@ -76,6 +72,8 @@ def get_mail(no):
         fr = SendAddress[0]
     else:
         fr = fr.__str__() 
+        
+    print(body)
     message = genai_transform(f"{subject.__str__()} {body}")
     return  f"{date.__str__()} {fr} {message}"
 
