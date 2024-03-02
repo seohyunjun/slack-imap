@@ -162,4 +162,4 @@ cython_debug/
 .env
 .vscode
 test.py
-send_email.json
+*.json
