@@ -2,3 +2,4 @@ python-dotenv
 pytz
 python-dateutil
 google-generativeai
+html2text
