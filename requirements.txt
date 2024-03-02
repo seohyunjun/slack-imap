@@ -2,4 +2,5 @@ python-dotenv
 pytz
 python-dateutil
 google-generativeai
+google-auth>2.15.0
 html2text
