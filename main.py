@@ -116,10 +116,11 @@ if __name__=='__main__':
     if result=="OK":
         
         message = ""
-        for num in email_list:
+        for idx, num in enumerate(email_list):
             mail_text = get_mail(num, genai)
             fields.append({"type": "mrkdwn","text": f"{mail_text}"})
-        
+            if idx == 8:
+                break
         temp = {
               "text": "Unread Email",
               "blocks": [
