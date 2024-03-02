@@ -32,8 +32,9 @@ jobs:
           echo "PASSWORD=${{ secrets.PASSWORD }}" >> .env
           echo "PORT=${{ secrets.PORT }}" >> .env
           echo "LABEL=${{ secrets.LABEL }}" >> .env
+          echo "LABEL=${{ secrets.GOOGLE_CREDENTIALS_NAME }}" >> .env
+          echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' | base64 --decode | jq > $GITHUB_WORKSPACE/$GOOGLE_APPLICATION_CREDENTIALS
           pip install -r requirements.txt
-          pip list
           python3 main.py
 
       - name: Input email to environment
