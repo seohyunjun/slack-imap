@@ -35,12 +35,13 @@ jobs:
           echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" | base64 --decode > jq > ${{ secrets.GOOGLE_CREDENTIALS_NAME }}
           pip install -r requirements.txt
           python3 main.py
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS : ${{ secrets.GOOGLE_CREDENTIALS_NAME }}
 
       - name: Input email to environment
         id: input-email 
         run: |
           echo "email="$(cat send_email.json)"" >> $GITHUB_ENV
-      
       - name: Send custom JSON data to Slack workflow
         id: slack
         uses: slackapi/slack-github-action@v1.24.0
