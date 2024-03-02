@@ -34,7 +34,7 @@ jobs:
           echo "LABEL=${{ secrets.LABEL }}" >> .env
           echo "LABEL=${{ secrets.GOOGLE_CREDENTIALS_NAME }}" >> .env
           echo $GITHUB_WORKSPACE/$GOOGLE_CREDENTIALS_NAME
-          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" | base64 --decode > $GITHUB_WORKSPACE/$GOOGLE_CREDENTIALS_NAME
+          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" | base64 --decode > $GOOGLE_CREDENTIALS_NAME
           pip install -r requirements.txt
           python3 main.py
 
