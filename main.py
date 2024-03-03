@@ -30,9 +30,9 @@ GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 def clean(text):
     return "".join(c if str(c).isalnum() else "_" for c in text)
 
-def genai_transform(text, genai):
+def genai_transform(text: str, genai: genai, prompt: str="Summarize 20 words the following text: "):
     model = genai.GenerativeModel('gemini-pro')
-    prompt = "Summarize 20 words the following text: " + text
+    prompt = prompt + text
     response = model.generate_content(prompt)
     text = response.text
     # slack block message max length is 255.
@@ -124,7 +124,7 @@ if __name__=='__main__':
             if idx == 7:
                 break
         
-        fields.append({"type": "mrkdwn","text": genai_transform(summary, genai)})
+        fields.append({"type": "mrkdwn","text": genai_transform(summary, genai, prompt="Summarize this email list and translate into korean: ")})
         
         temp = {
               "text": "Unread Email",
