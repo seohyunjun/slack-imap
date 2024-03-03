@@ -124,7 +124,8 @@ if __name__=='__main__':
             if idx == 7:
                 break
         
-        fields.append({"type": "mrkdwn","text": genai_transform(summary, genai, prompt="아래 이메일을 요약하고 한국어로 번역 :")})
+        fields.append({"type": "divider"})
+        fields.append({"type": "section","text": {"type": "mrkdwn","text": genai_transform(summary, genai, prompt="아래 이메일을 요약하고 한국어로 번역 :")}})
         
         temp = {
               "text": "Unread Email",
