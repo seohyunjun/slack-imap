@@ -10,7 +10,7 @@ import re
 
 from dateutil.parser import parse
 import datetime
-
+  
 import string
 
 import email
@@ -33,15 +33,24 @@ def clean(text):
 
 
 def genai_transform(
-    text: str, genai: genai, prompt: str = "Summarize 20 words the following text: "
+    text: str, genai: genai, prompt: str = "Summarize 30 words the following text: ", max_lenght: int=210
 ):
     model = genai.GenerativeModel("gemini-pro")
     prompt = prompt + text
     response = model.generate_content(prompt)
     text = response.text
     # slack block message max length is 255.
-    return text[:210]
+    return text[:max_lenght]
 
+
+def genai_gag(genai: genai)->str:
+    model = genai.GenerativeModel("gemini-pro")
+    # datetime.datetime.now() time zone is Asia/Seoul
+    prompt = f"지금 시간({datetime.datetime.now(tz=timezone("Asia/Seoul")):{"%Y-%m-%d"}})에 맞는 농담이나 재밌는 이야기를 해주세요. 50자 이내로 작성해주세요."
+    response = model.generate_content(prompt)
+    text = response.text
+    # slack block message max length is 255.
+    return text
 
 # INBOX 메일함 선택
 def check_mailbox(server, mailbox):
@@ -117,13 +126,13 @@ if __name__ == "__main__":
 
     fields = [{"type": "mrkdwn", "text": "*email*"}]
     if result == "OK":
-
         message = ""
         summary = ""
         for idx, num in enumerate(email_list):
             mail_text = get_mail(num, genai)
             fields.append({"type": "mrkdwn", "text": f"{mail_text}"})
             summary += f"""{idx}. {mail_text}\n"""
+            
             if idx == 7:
                 break
 
@@ -141,6 +150,13 @@ if __name__ == "__main__":
                             genai,
                             prompt="아래 이메일을 요약하고 한국어로 번역 :",
                         ),
+                    },
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": genai_gag(genai),
                     },
                 },
             ],
