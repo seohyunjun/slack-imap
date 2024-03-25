@@ -45,8 +45,8 @@ def genai_transform(
 
 def genai_gag(genai: genai)->str:
     model = genai.GenerativeModel("gemini-pro")
-    # datetime.datetime.now() time zone is Asia/Seoul
-    prompt = f"지금 시간({datetime.datetime.now(tz=timezone("Asia/Seoul")):{"%Y-%m-%d"}})에 맞는 농담이나 재밌는 이야기를 해주세요. 50자 이내로 작성해주세요."
+    now = datetime.datetime.now(tz=timezone("Asia/Seoul"))
+    prompt = f"지금 시간({now:{"%Y-%m-%d"}})에 맞는 농담이나 재밌는 이야기를 해주세요. 50자 이내로 작성해주세요."
     response = model.generate_content(prompt)
     text = response.text
     # slack block message max length is 255.
