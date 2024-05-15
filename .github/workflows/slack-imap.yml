@@ -1,55 +1,55 @@
-name: Slack IMAPLIB
-on:
-  push:
-    branches:
-      - main
+# name: Slack IMAPLIB
+# on:
+#   push:
+#     branches:
+#       - main
 
-  schedule:
-    # https://crontab.guru/
-    # Past 1 hour day-of-week (Monday through Friday)
-    - cron: '0 */1 * * 1-5'
-  workflow_dispatch:
+#   schedule:
+#     # https://crontab.guru/
+#     # Past 1 hour day-of-week (Monday through Friday)
+#     - cron: '0 */1 * * 1-5'
+#   workflow_dispatch:
 
-jobs:
-  cron:
-    runs-on: ubuntu-latest
+# jobs:
+#   cron:
+#     runs-on: ubuntu-latest
     
-    steps:
-      - name: Checkout & Set Environment Variables
-        uses: actions/checkout@v3
+#     steps:
+#       - name: Checkout & Set Environment Variables
+#         uses: actions/checkout@v3
 
-      - name: Install dependencies
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-          cache: 'pip' 
+#       - name: Install dependencies
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: '3.11'
+#           cache: 'pip' 
 
-      - name: Set up environment variables
-        run: |
-          cd $GITHUB_WORKSPACE
-          echo "IMAP4_SSL=${{ secrets.IMAP4_SSL }}" >> .env
-          echo "EMAIL=${{ secrets.EMAIL }}" >> .env
-          echo "PASSWORD=${{ secrets.PASSWORD }}" >> .env
-          echo "PORT=${{ secrets.PORT }}" >> .env
-          echo "LABEL=${{ secrets.LABEL }}" >> .env
-          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" | base64 --decode > jq > ${{ secrets.GOOGLE_CREDENTIALS_NAME }}
-          pip install -r requirements.txt
-          python3 main.py
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS : ${{ secrets.GOOGLE_CREDENTIALS_NAME }}
+#       - name: Set up environment variables
+#         run: |
+#           cd $GITHUB_WORKSPACE
+#           echo "IMAP4_SSL=${{ secrets.IMAP4_SSL }}" >> .env
+#           echo "EMAIL=${{ secrets.EMAIL }}" >> .env
+#           echo "PASSWORD=${{ secrets.PASSWORD }}" >> .env
+#           echo "PORT=${{ secrets.PORT }}" >> .env
+#           echo "LABEL=${{ secrets.LABEL }}" >> .env
+#           echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" | base64 --decode > jq > ${{ secrets.GOOGLE_CREDENTIALS_NAME }}
+#           pip install -r requirements.txt
+#           python3 main.py
+#         env:
+#           GOOGLE_APPLICATION_CREDENTIALS : ${{ secrets.GOOGLE_CREDENTIALS_NAME }}
 
-      - name: Input email to environment
-        id: input-email 
-        run: |
-          echo "email="$(cat send_email.json)"" >> $GITHUB_ENV
-      - name: Send custom JSON data to Slack workflow
-        id: slack
-        uses: slackapi/slack-github-action@v1.24.0
-        with:
-        # For posting a rich message using Block Kit
-          payload: |
-            ${{ env.email }}
+#       - name: Input email to environment
+#         id: input-email 
+#         run: |
+#           echo "email="$(cat send_email.json)"" >> $GITHUB_ENV
+#       - name: Send custom JSON data to Slack workflow
+#         id: slack
+#         uses: slackapi/slack-github-action@v1.24.0
+#         with:
+#         # For posting a rich message using Block Kit
+#           payload: |
+#             ${{ env.email }}
 
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+#         env:
+#           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+#           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK

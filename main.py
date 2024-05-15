@@ -2,20 +2,15 @@ from dotenv import load_dotenv
 from pytz import timezone
 import imaplib
 import os
-
 import html2text
-
+import time
 import json
 import re
-
 from dateutil.parser import parse
 import datetime
-  
 import string
-
 import email
 from email.header import decode_header, make_header
-
 import google.generativeai as genai
 
 load_dotenv()
@@ -35,20 +30,21 @@ def clean(text):
 def genai_transform(
     text: str, genai: genai, prompt: str = "Summarize 30 words the following text: ", max_lenght: int=210
 ):
-    model = genai.GenerativeModel("gemini-pro")
+    model = genai.GenerativeModel("gemini-1.5-pro-latest")
     prompt = prompt + text
     response = model.generate_content(prompt)
     text = response.text
     # slack block message max length is 255.
-    return text[:max_lenght]
+    return text
 
 
 def genai_gag(genai: genai)->str:
-    model = genai.GenerativeModel("gemini-pro")
+    model = genai.GenerativeModel("gemini-1.5-pro-latest")
     now = datetime.datetime.now(tz=timezone("Asia/Seoul"))
     date_format= "%Y-%m-%d"
     prompt = f"""지금 시간({now:{date_format}})에 맞는 농담이나 재밌는 이야기를 해주세요. 50자 이내로 작성해주세요."""
     response = model.generate_content(prompt)
+    time.sleep(4)
     text = response.text
     # slack block message max length is 255.
     return text
@@ -66,6 +62,19 @@ def check_mailbox(server, mailbox):
     else:
         return "Can't connect to the mailbox"
 
+
+def normalize_text(s:str, sep_token = " \n ")->str:
+    s = re.sub(r'\s+',  ' ', s).strip()
+    s = re.sub(r". ,","",s)
+    # remove all instances of multiple spaces
+    s = s.replace("..",".")
+    s = s.replace(". .",".")
+    s = s.replace("\n", "")
+    s = s.replace("#","")
+    s = s.strip()
+    if s =="":
+        s = "<blank>"
+    return s
 
 def get_mail(num, genai):
     result, email_data = server.uid("fetch", num, "(RFC822)")
@@ -103,6 +112,38 @@ def get_mail(num, genai):
     message = genai_transform(f"""{subject.__str__()} {body}""", genai)
     return f"{date.__str__()} {fr} {message}"
 
+def preprocess_block(message:str, genai: genai) -> list[dict]:
+    """Preprocess the message to fit the slack block message format."""
+    try:
+        answer = genai_transform(
+            normalize_text(message),
+            genai,
+            prompt="아래 이메일을 요약하고 한국어로 번역 :"
+            )
+    except Exception as e:
+        answer = f"Error: {e}"
+        error_block = {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": f"{answer}",
+                }
+            }
+        return error_block
+            
+    max_legnth = 255
+    block_counts = len(answer) // max_legnth + 1
+    blocks = []
+    for i in range(block_counts):
+        block = {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": f"{answer[i*max_legnth:(i+1)*max_legnth]}",
+                    }
+            }
+        blocks.append(block)
+    return blocks
 
 if __name__ == "__main__":
     genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
@@ -133,35 +174,15 @@ if __name__ == "__main__":
             mail_text = get_mail(num, genai)
             fields.append({"type": "mrkdwn", "text": f"{mail_text}"})
             summary += f"""{idx}. {mail_text}\n"""
+        
+        block=[]
+        block.append({"type": "section", "fields": fields})
+        block.append({"type": "divider"})
+        
+        for info_block in preprocess_block(summary, genai):
+            block.append(info_block)
             
-            if idx == 7:
-                break
-
-        temp = {
-            "text": "Unread Email",
-            "blocks": [
-                {"type": "section", "fields": fields},
-                {"type": "divider"},
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": genai_transform(
-                            summary,
-                            genai,
-                            prompt="아래 이메일을 요약하고 한국어로 번역 :",
-                        ),
-                    },
-                },
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": genai_gag(genai),
-                    },
-                },
-            ],
-        }
-
+        temp = {"text": "Unread Email","blocks": block}
+        
         with open("send_email.json", "w") as outfile:
             json.dump(temp, outfile, indent=4)
